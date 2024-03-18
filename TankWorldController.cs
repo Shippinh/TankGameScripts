@@ -12,13 +12,12 @@ namespace UnityEngine
 
         public GameObject enemyTankPrefab;
         public GameObject minePrefab;
-        public GameObject moneyPrefab;
+        public GameObject coinPacks;
         public GameObject platformPrefab;
 
         public bool firstPlatform = false;
 
         public float destroyTime = 20f;
-
         private void Awake()
         {
             Destroy(this.gameObject, destroyTime);
@@ -41,6 +40,12 @@ namespace UnityEngine
                 {
                     Instantiate(minePrefab, this.transform.position + new Vector3(Random.Range(-5f, 5f), 0.54f, Random.Range(60f, 80f)), Quaternion.identity);
                     i++;
+                }
+                if(i < 4)
+                {
+                    int coinPackIndex = Random.Range(0, 4);
+                    Debug.Log(coinPacks.transform.GetChild(coinPackIndex).gameObject.name);
+                    Instantiate(coinPacks.transform.GetChild(coinPackIndex).gameObject, this.transform.position + new Vector3(0f, 1.5f, Random.Range(60f, 80f)), Quaternion.identity);
                 }
                 nextPlatform.name = "New Platform";
             }

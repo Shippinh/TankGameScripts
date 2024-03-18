@@ -7,11 +7,12 @@ public class TankPlayerBehavior : MonoBehaviour
 {
     [SerializeField]
     TankMovement tankMovementReference;
-
     public TankMenuHandler deathMenuHandler;
 
     public uint playerHP = 3;
     public uint playerArmor = 3;
+
+    public bool isUnkillable = false;
 
     public float towerPower = 10f;
     bool isDestroyed = false;
@@ -31,22 +32,33 @@ public class TankPlayerBehavior : MonoBehaviour
 
     private IEnumerator Destruction()
     {
-        tankMovementReference.enabled = false;
-        tankMovementReference.EnableBodyConstraints();
-        Rigidbody tower = tankMovementReference.tower;
-        Debug.Log("Hit");
-        tower.transform.parent = null;
-        tower.isKinematic = false;
-        tower.mass = Random.Range(0.4f, 0.7f);
-        isDestroyed = true;
-        //audioSource.pitch = Random.Range(0.8f, 1.3f);
-        //audioSource.Play();
-        tower.AddForce(Vector3.up * towerPower, ForceMode.Impulse);
-        tower.AddTorque(new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * towerPower, ForceMode.Impulse);
+        if(!isUnkillable)
+        {
+            tankMovementReference.enabled = false;
+            tankMovementReference.EnableBodyConstraints();
 
-        yield return new WaitForSeconds(1f);
+            //Debug.Log("Hit");
 
-        tower.gameObject.GetComponent<SphereCollider>().enabled = true;
+            Rigidbody tower = tankMovementReference.tower;
+            tower.transform.parent = null;
+            tower.isKinematic = false;
+            tower.mass = Random.Range(0.4f, 0.7f);
+
+            isDestroyed = true;
+
+            //audioSource.pitch = Random.Range(0.8f, 1.3f);
+            //audioSource.Play();
+
+            tower.AddForce(Vector3.up * towerPower, ForceMode.Impulse);
+            tower.AddTorque(new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * towerPower, ForceMode.Impulse);
+
+            yield return new WaitForSeconds(1f);
+
+            tower.gameObject.GetComponent<SphereCollider>().enabled = true;
+            
+            //deathMenuHandler.DeathScreenEnabled(true);
+            StartCoroutine(deathMenuHandler.ShowDeathScreen());
+        }
     }
 
     private void OnCollisionEnter(Collision col)
@@ -72,14 +84,12 @@ public class TankPlayerBehavior : MonoBehaviour
                 playerArmor--;
             else
                 playerHP--;
-            Debug.Log("Hit");
+            //Debug.Log("Hit");
         }
 
         if(playerHP == 0)
         {
             StartCoroutine(Destruction());
-            //deathMenuHandler.DeathScreenEnabled(true);
-            StartCoroutine(deathMenuHandler.ShowDeathScreen());
         }
     }
 }

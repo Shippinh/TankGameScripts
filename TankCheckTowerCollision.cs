@@ -8,8 +8,10 @@ public class TankCheckTowerCollision : MonoBehaviour
     {
         if(col.collider.tag == "Player Bullet" && transform.parent.GetComponent<TankEnemyBehaviour>().isDestroyed != true)
         {
-            transform.parent.GetComponent<TankEnemyBehaviour>().CollisionDetected(this);
+            TankEnemyBehaviour thisTowersTank = transform.parent.GetComponent<TankEnemyBehaviour>();
+            float destroyTime = thisTowersTank.destroyTime; //+1f = yield wait in destruction function of enemy tank
+            thisTowersTank.CollisionDetected(this);
+            Destroy(this.gameObject, destroyTime);
         }
     }
-
 }

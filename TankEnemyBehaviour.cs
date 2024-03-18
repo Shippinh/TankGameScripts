@@ -49,7 +49,6 @@ namespace UnityEngine
             Destroy(obj, destroyTime + 20f);
             Destroy(tower.gameObject, destroyTime + 20f);
             RandomiseProperties();
-
         }
 
         // Update is called once per frame
