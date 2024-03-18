@@ -6,36 +6,22 @@ using UnityEngine.SceneManagement;
 using System.Linq;
 using Unity.PlasticSCM.Editor.WebApi;
 
-public class TankMenuHandler : MonoBehaviour
+public class TankDeathUI : MonoBehaviour
 {
-    //public TankPlayerBehavior playerScript;
-    //public TankWorldController worldController;
     public UIDocument deathScreen;
-    public UIDocument mainMenu;
 
-    private void OnEnable()
+    void OnEnable()
     {
         //Button restartButton = deathScreen.rootVisualElement.Q<Button>("RestartButton");
         //restartButton.clicked += () => OnRestartButtonClick();
         //restartButton.RegisterCallback<MouseUpEvent>(OnRestartButtonClick);
-    }
-
-    private void Awake()
-    {
         VisualElement restartButton = deathScreen.rootVisualElement.Q("RestartButton") as Button;
         restartButton.RegisterCallback<ClickEvent>(OnRestartButtonClick);
+    }
 
-        //VisualElement restartButton = deathScreen.rootVisualElement.Q("RestartButton") as Button;
-        //restartButton.RegisterCallback<ClickEvent>(OnRestartButtonClick);
-
-        /*VisualElement playButton = mainMenu.rootVisualElement.Q("PlayButton") as Button;
-        playButton.RegisterCallback<ClickEvent>(OnPlayButtonClick);
-
-        VisualElement shopButton = mainMenu.rootVisualElement.Q("ShopButton") as Button;
-        shopButton.RegisterCallback<ClickEvent>(OnShopButtonClick);
-
-        VisualElement settingsButton = mainMenu.rootVisualElement.Q("SettingsButton") as Button;
-        settingsButton.RegisterCallback<ClickEvent>(OnSettingsButtonClick);*/
+    void Awake()
+    {
+        deathScreen = GetComponent<UIDocument>();
     }
 
     private void OnRestartButtonClick(ClickEvent evt)//REMINDER TO NEVER USE OPACITY AS TRANSITION, IT DOESN'T DISABLE THE UI THINGS AT ALL LOL
@@ -89,21 +75,6 @@ public class TankMenuHandler : MonoBehaviour
         screenBG.style.opacity = 0f;
         button.style.opacity = 0f;
     }
-
-    /*private void OnPlayButtonClick(ClickEvent evt)
-    {
-
-    }
-
-    private void OnShopButtonClick(ClickEvent evt)
-    {
-
-    }
-
-    private void OnSettingsButtonClick(ClickEvent evt)
-    {
-
-    }*/
 
     public IEnumerator ShowDeathScreen()
     {

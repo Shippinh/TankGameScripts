@@ -6,6 +6,7 @@ public class TankCheckTowerCollision : MonoBehaviour
 {
     void OnCollisionEnter(Collision col)
     {
+        //this still needs more work, all those nullReferences are not good
         if(col.collider.tag == "Player Bullet" && transform.parent.GetComponent<TankEnemyBehaviour>().isDestroyed != true)
         {
             TankEnemyBehaviour thisTowersTank = transform.parent.GetComponent<TankEnemyBehaviour>();

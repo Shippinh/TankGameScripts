@@ -7,7 +7,7 @@ public class TankPlayerBehavior : MonoBehaviour
 {
     [SerializeField]
     TankMovement tankMovementReference;
-    public TankMenuHandler deathMenuHandler;
+    public TankDeathUI deathUI;
 
     public uint playerHP = 3;
     public uint playerArmor = 3;
@@ -20,14 +20,7 @@ public class TankPlayerBehavior : MonoBehaviour
     void Awake()
     {
         tankMovementReference = GetComponent<TankMovement>();
-        deathMenuHandler.deathScreen.rootVisualElement.Q<Button>("RestartButton").SetEnabled(false);
-        
-    }
-
-    // Update is called once per frame
-    void FixedUpdate()
-    {
-
+        deathUI.deathScreen.rootVisualElement.Q<Button>("RestartButton").SetEnabled(false);
     }
 
     private IEnumerator Destruction()
@@ -57,7 +50,7 @@ public class TankPlayerBehavior : MonoBehaviour
             tower.gameObject.GetComponent<SphereCollider>().enabled = true;
             
             //deathMenuHandler.DeathScreenEnabled(true);
-            StartCoroutine(deathMenuHandler.ShowDeathScreen());
+            StartCoroutine(deathUI.ShowDeathScreen());
         }
     }
 
