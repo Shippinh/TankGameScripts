@@ -15,12 +15,12 @@ public class TankPlayerBehavior : MonoBehaviour
     public bool isUnkillable = false;
 
     public float towerPower = 10f;
-    bool isDestroyed = false;
+    //bool isDestroyed = false;
     // Start is called before the first frame update
     void Awake()
     {
         tankMovementReference = GetComponent<TankMovement>();
-        deathUI.deathScreen.rootVisualElement.Q<Button>("RestartButton").SetEnabled(false);
+        deathUI.deathScreen.rootVisualElement.Q<Button>("RestartButton").SetEnabled(false);//on restart causes null reference
     }
 
     private IEnumerator Destruction()
@@ -37,7 +37,7 @@ public class TankPlayerBehavior : MonoBehaviour
             tower.isKinematic = false;
             tower.mass = Random.Range(0.4f, 0.7f);
 
-            isDestroyed = true;
+            //isDestroyed = true;
 
             //audioSource.pitch = Random.Range(0.8f, 1.3f);
             //audioSource.Play();
