@@ -48,6 +48,7 @@ public class TankBulletBehavior : MonoBehaviour
         if (this.tag == "Enemy Bullet")
             if (col.collider.tag == "Player")
             {
+                bullet.gameObject.tag = "Non Effective Bullet";
                 bullet.useGravity = false;
             }
     }
@@ -56,6 +57,13 @@ public class TankBulletBehavior : MonoBehaviour
     {
         Vector3 bulletDirection = transform.worldToLocalMatrix.inverse * Vector3.forward * speed;
         bullet.AddForce(bulletDirection, ForceMode.Impulse);
+        StartCoroutine(MakeBulletIneffective());
         Destroy(bullet.gameObject, destroyTime);
+    }
+
+    private IEnumerator MakeBulletIneffective()
+    {
+        yield return new WaitForSeconds(destroyTime / 2);
+        bullet.gameObject.tag = "Non Effective Bullet";
     }
 }

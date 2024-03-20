@@ -33,7 +33,7 @@ namespace UnityEngine
                 while (i < 4)
                 {
                     //for some reason instantiates like ass and sometimes causes tank towers to be unproportional to the prefab
-                    Instantiate(enemyTankPrefab, this.transform.position + new Vector3(Random.Range(-5f, 5f), 1.3f, Random.Range(20f, 80f)), Quaternion.identity);
+                    Instantiate(enemyTankPrefab, this.transform.position + new Vector3(Random.Range(-4f, 4f), 1.3f, Random.Range(10f, 80f)), Quaternion.identity);
                     i++;
                 }
                 i = Random.Range(0, 3);

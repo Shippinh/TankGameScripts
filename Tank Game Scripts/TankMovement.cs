@@ -16,6 +16,8 @@ public class TankMovement : MonoBehaviour
     Ray mouseRay;
     Vector3 touchInput;
     float fireInput;
+    float fireDelay = 2f; //how much seconds to wait before allowing another shot
+    float currentFireDelay = 0f;
 
     [SerializeField]
     public Rigidbody tower;
@@ -77,8 +79,9 @@ public class TankMovement : MonoBehaviour
 
         if (fireInput == 1)
         {
-            if (!hasFired)
+            if (!hasFired && currentFireDelay < 0)
             {
+                currentFireDelay = fireDelay;
                 soundSource.pitch = UnityEngine.Random.Range(0.8f, 1.2f);
                 Instantiate(bullet, turretCannon.transform.position, turretCannon.transform.rotation, tankParent.transform); 
                 if (UnityEngine.Random.Range(0, 2) == 0)
@@ -90,6 +93,8 @@ public class TankMovement : MonoBehaviour
         }
         else if(fireInput == 0)
             hasFired = false;
+        
+        currentFireDelay -= Time.deltaTime;
     }
 
     private void OnCollisionExit() //prevent sliding after collision

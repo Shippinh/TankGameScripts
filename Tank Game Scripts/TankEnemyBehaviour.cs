@@ -72,7 +72,7 @@ namespace UnityEngine
             }
         }
 
-        private IEnumerator Destruction()
+        public IEnumerator Destruction()
         {
             //Debug.Log("Hit");
             tower.transform.parent = null;
