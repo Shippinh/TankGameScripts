@@ -6,6 +6,7 @@ public class TankBulletBehavior : MonoBehaviour
 {
     public float speed;
     public float destroyTime = 20f;
+    public float ineffectiveTime = 10f;
     public float moveTime = 1f;
     public bool useConstantFlying = false;
 
@@ -15,6 +16,10 @@ public class TankBulletBehavior : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
+        if(gameObject.tag == "Player Bullet")
+        {
+            Physics.IgnoreLayerCollision(12, 13);
+        }
         bullet = GetComponent<Rigidbody>();
         if (useConstantFlying)
         {
@@ -43,7 +48,7 @@ public class TankBulletBehavior : MonoBehaviour
         }
     }
 
-    private void OnCollisionEnter(Collision col)
+    private void OnCollisionExit(Collision col)
     {
         if (this.tag == "Enemy Bullet")
             if (col.collider.tag == "Player")
@@ -63,7 +68,7 @@ public class TankBulletBehavior : MonoBehaviour
 
     private IEnumerator MakeBulletIneffective()
     {
-        yield return new WaitForSeconds(destroyTime / 2);
+        yield return new WaitForSeconds(ineffectiveTime);
         bullet.gameObject.tag = "Non Effective Bullet";
     }
 }

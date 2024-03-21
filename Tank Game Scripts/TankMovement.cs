@@ -83,7 +83,7 @@ public class TankMovement : MonoBehaviour
             {
                 currentFireDelay = fireDelay;
                 soundSource.pitch = UnityEngine.Random.Range(0.8f, 1.2f);
-                Instantiate(bullet, turretCannon.transform.position, turretCannon.transform.rotation, tankParent.transform); 
+                Instantiate(bullet, turretCannon.transform.position, turretCannon.transform.rotation); 
                 if (UnityEngine.Random.Range(0, 2) == 0)
                     soundSource.PlayOneShot(shoot1);
                 else
@@ -97,10 +97,10 @@ public class TankMovement : MonoBehaviour
         currentFireDelay -= Time.deltaTime;
     }
 
-    private void OnCollisionExit() //prevent sliding after collision
+    /*private void OnCollisionExit() //prevent sliding after collision, NOT, lol
     {
         SetBodyVelocityToZero();
-    }
+    }*/
 
     public void SetBodyVelocityToZero()
     {
