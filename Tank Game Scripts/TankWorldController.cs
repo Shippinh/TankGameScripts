@@ -8,20 +8,20 @@ namespace UnityEngine
 
     public class TankWorldController : MonoBehaviour
     {
-        public BoxCollider platformSpawnTrigger;
         public GameObject enemyTankPrefab;
         public GameObject minePrefab;
         public GameObject coinPacks;
+        bool isHit = false;
         public GameObject platformPrefab;
         [SerializeField]
 
         public bool firstPlatform = false;
 
         public float destroyTime = 20f;
-        private void Awake()
+        /*private void Awake()
         {
             Destroy(this.gameObject, destroyTime);
-        }
+        }*/
 
         /*private void OnTriggerEnter(Collider collision)
         {
@@ -54,8 +54,9 @@ namespace UnityEngine
 
         private void OnCollisionEnter(Collision collision)
         {
-            if (collision.collider.tag == "Player" || collision.gameObject.name == "Tank" || collision.gameObject.name == "Tank Body")
+            if ((collision.collider.tag == "Player" || collision.gameObject.name == "Tank" || collision.gameObject.name == "Tank Body") && isHit == false)
             {
+                isHit = true;
                 //Debug.Log("Hit!");
                 GameObject nextPlatform = Instantiate(platformPrefab, this.transform.position + new Vector3(0f, 0f, 50f), Quaternion.identity);
                 int i = Random.Range(0, 4);
@@ -78,6 +79,15 @@ namespace UnityEngine
                     Instantiate(coinPacks.transform.GetChild(coinPackIndex).gameObject, this.transform.position + new Vector3(0f, 1.5f, Random.Range(60f, 80f)), Quaternion.identity);
                 }
                 nextPlatform.name = "New Platform";
+            }
+        }
+
+        private void OnCollisionExit(Collision collision)
+        {
+            Debug.Log("Collider '" + collision.collider.name + "' has stopped colliding");
+            if ((collision.collider.tag == "Player" || collision.gameObject.name == "Tank" || collision.gameObject.name == "Tank Body") && isHit == true)
+            {
+                Destroy(this.gameObject, destroyTime);
             }
         }
     }
