@@ -20,6 +20,7 @@ public class TankPlayerBehavior : MonoBehaviour
 
     public List<GameObject> upgrades;
     private int hitCount = 0;
+    public List<AudioSource> audioSources;
 
     public class DoubleBooleanPair
     {
@@ -32,11 +33,13 @@ public class TankPlayerBehavior : MonoBehaviour
         }
     }
     
+    
     public Dictionary<string, DoubleBooleanPair> upgradeDict = new Dictionary<string, DoubleBooleanPair>();
     //bool isDestroyed = false;
     // Start is called before the first frame update
     void Awake()
     {
+        audioSources = GetComponents<AudioSource>().ToList();
         foreach(GameObject upg in upgrades)
         {
             upgradeDict.Add(upg.name, new DoubleBooleanPair(1d, false));
@@ -80,7 +83,7 @@ public class TankPlayerBehavior : MonoBehaviour
     {
         if (col.collider.tag == "Mine")
         {
-            Debug.Log("Hit Mine");
+            //Debug.Log("Hit Mine");
             if (!upgradeDict["Thrall"].boolean)
             {
                 playerHP = 0;
@@ -94,7 +97,7 @@ public class TankPlayerBehavior : MonoBehaviour
 
         if (col.collider.tag == "Enemy Tank")
         {
-            Debug.Log("Hit Enemy Tank");
+            //Debug.Log("Hit Enemy Tank");
             TankEnemyBehaviour enemyTank = col.gameObject.GetComponent<TankEnemyBehaviour>();
             if (!enemyTank.isDestroyed)
             {
@@ -113,11 +116,18 @@ public class TankPlayerBehavior : MonoBehaviour
         
         if (col.collider.tag == "Enemy Bullet")
         {
+            int audioSourceIndex = Random.Range(0,2);
             hitCount++;
             if (playerArmor > 0)
+            {
                 playerArmor--;
+                StartCoroutine(WaitForSoundToFinish(audioSources[audioSourceIndex]));
+            }
             else
+            {
                 playerHP--;
+                StartCoroutine(WaitForSoundToFinish(audioSources[audioSourceIndex]));//better change this later
+            }
             //Debug.Log("Player got hit " + hitCount + " times");
         }
 
@@ -142,5 +152,12 @@ public class TankPlayerBehavior : MonoBehaviour
             currentUpgrade.SetActive(true);
             upgradeDict[currentUpgrade.name].boolean = true;
         }
+    }
+
+    private IEnumerator WaitForSoundToFinish(AudioSource source)
+    {
+        source.pitch = Random.Range(0.8f, 1.3f);
+        source.Play();
+        yield return new WaitUntil(() => source.time >= source.clip.length);
     }
 }
