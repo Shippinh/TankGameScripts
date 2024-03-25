@@ -42,7 +42,7 @@ public class TankPlayerBehavior : MonoBehaviour
         audioSources = GetComponents<AudioSource>().ToList();
         foreach(GameObject upg in upgrades)
         {
-            upgradeDict.Add(upg.name, new DoubleBooleanPair(1d, false));
+            upgradeDict.Add(upg.name, new DoubleBooleanPair(1d, false)); //upgrade name: upgrade level, is active
         }
         tankMovementReference = GetComponent<TankMovement>();
         deathUI.deathScreen.rootVisualElement.Q<Button>("RestartButton").SetEnabled(false);//on restart causes null reference
@@ -121,12 +121,12 @@ public class TankPlayerBehavior : MonoBehaviour
             if (playerArmor > 0)
             {
                 playerArmor--;
-                StartCoroutine(WaitForSoundToFinish(audioSources[audioSourceIndex]));
+                StartCoroutine(PlayBulletHitSound(audioSources[audioSourceIndex], col));
             }
             else
             {
                 playerHP--;
-                StartCoroutine(WaitForSoundToFinish(audioSources[audioSourceIndex]));//better change this later
+                StartCoroutine(PlayBulletHitSound(audioSources[audioSourceIndex], col));//better change this later
             }
             //Debug.Log("Player got hit " + hitCount + " times");
         }
@@ -154,10 +154,10 @@ public class TankPlayerBehavior : MonoBehaviour
         }
     }
 
-    private IEnumerator WaitForSoundToFinish(AudioSource source)
+    private IEnumerator PlayBulletHitSound(AudioSource source, Collision col)
     {
         source.pitch = Random.Range(0.8f, 1.3f);
-        source.Play();
+        AudioSource.PlayClipAtPoint(source.clip, col.collider.transform.position);
         yield return new WaitUntil(() => source.time >= source.clip.length);
     }
 }

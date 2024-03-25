@@ -85,9 +85,13 @@ public class TankMovement : MonoBehaviour
                 soundSource.pitch = UnityEngine.Random.Range(0.8f, 1.2f);
                 Instantiate(bullet, turretCannon.transform.position, turretCannon.transform.rotation); 
                 if (UnityEngine.Random.Range(0, 2) == 0)
-                    soundSource.PlayOneShot(shoot1);
+                {
+                    AudioSource.PlayClipAtPoint(shoot1, transform.position);
+                }
                 else
-                    soundSource.PlayOneShot(shoot2);
+                {  
+                   AudioSource.PlayClipAtPoint(shoot2, transform.position);//soundSource.PlayOneShot(shoot2); 
+                }
                 hasFired = true;
             }
         }
