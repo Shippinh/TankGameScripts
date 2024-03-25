@@ -6,7 +6,7 @@ using UnityEngine.UIElements.Experimental;
 public class TankEconomyController : MonoBehaviour
 {
     [SerializeField]
-    static private int totalCoinCount = 0; //use static to make global variables that persist between scripts
+    static private int totalCoinCount = 0; //use static to make global variables that store stuff between script activations
     public int TotalCoinCount
     {
         get
@@ -29,6 +29,34 @@ public class TankEconomyController : MonoBehaviour
         set
         {
             currentCoinCount = value;
+        }
+    }
+
+    [SerializeField]
+    static private int thrallUpgradeLevel = 0;
+    public int ThrallUpgradeLevel
+    {
+        get
+        {
+            return thrallUpgradeLevel;
+        }
+        set
+        {
+            thrallUpgradeLevel = value;
+        }
+    }
+
+    [SerializeField]
+    static private int ramUpgradeLevel = 0;
+    public int RamUpgradeLevel
+    {
+        get
+        {
+            return ramUpgradeLevel;
+        }
+        set
+        {
+            ramUpgradeLevel = value;
         }
     }
 
