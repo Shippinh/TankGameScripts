@@ -1,9 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using System.IO;
 using System;
-using Unity.VisualScripting;
 using System.Threading.Tasks;
 using System.Linq;
 
@@ -43,16 +41,30 @@ public static class TankDataHandler
         Debug.Log("Save complete");
     }
 
-    public static Dictionary<string, float> LoadAllData()
+    public static void SaveAllData(Dictionary<string, float> data)
+    {
+        string content = "";
+
+        foreach(var element in data)
+        {
+            content += "\n" + element.Key + ":" + element.Value;
+        }
+
+        Debug.Log("Saving");
+        UpdateTextFile(content).Wait();
+        Debug.Log("Save complete");
+    }
+
+    public static Dictionary<string, float> LoadAllData() //reminder to create handler for when the user lacks data
     {
         string path = Application.dataPath + "/Save Data.txt";
         Dictionary<string, float> content = new Dictionary<string, float>();
 
-        foreach(string str in File.ReadLines(path))
+        /*foreach(string str in File.ReadLines(path))
         {
             //Debug.Log(str);
             Debug.Log(str.Split(":").Last());
-        }
+        }*/
         
         if(new FileInfo(path).Length != 0)
         {
@@ -70,7 +82,7 @@ public static class TankDataHandler
         else
         {
             Debug.Log("The save file doesn't contain any strings");
-            throw new Exception("The save file doesn't contain any strings"); 
+            return content;
         }
         
         return content;
