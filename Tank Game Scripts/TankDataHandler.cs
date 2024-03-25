@@ -4,111 +4,89 @@ using UnityEngine;
 using System.IO;
 using System;
 using Unity.VisualScripting;
+using System.Threading.Tasks;
+using System.Linq;
 
 public static class TankDataHandler
 {
-    private static bool saveCoins = true;
-    public static bool SaveCoins
+    public static void SaveAllData(TankEconomyController economyController)
     {
-        get
-        {
-            return saveCoins;
-        }
-        set
-        {
-            saveCoins = value;
-        }
-    }
-    
-    private static bool saveUpgrades = true;
-    public static bool SaveUpgrades
-    {
-        get
-        {
-            return saveUpgrades;
-        }
-        set
-        {
-            saveUpgrades = value;
-        }
-    }
-    
-    private static int savedCoinCount;
-    public static int SavedCoinCount
-    {
-        set
-        {
-            savedCoinCount = value;
-        }
-        get
-        {
-            return savedCoinCount;
-        }
-    }
-
-    private static float ramDuration;
-    private static int ramUpgradeLevel;
-    public static int RamUpgradeLevel
-    {
-        set
-        {
-            ramUpgradeLevel = value;
-        }
-        get
-        {
-            return ramUpgradeLevel;
-        }
-    }
-
-    private static float thrallDuration;
-    private static int thrallUpgradeLevel;
-    public static int ThrallUpgradeLevel
-    {
-        set
-        {
-            thrallUpgradeLevel = value;
-        }
-        get
-        {
-            return thrallUpgradeLevel;
-        }
-    }
-
-    public static void SaveAllData(bool doSaveCoins, bool doSaveUpgrades, TankEconomyController economyController)
-    {
-        SaveCoins = doSaveCoins;
-        SaveUpgrades = doSaveUpgrades;
-
         string content = "";
 
-        if(SaveCoins)
-        {
-            content += "\nCoins:" + (economyController.TotalCoinCount + economyController.CurrentCoinCount).ToString();
-        }
-        if(SaveUpgrades)
-        {
-            content += "\nThrallLevel:" + economyController.ThrallUpgradeLevel.ToString();
-            content += "\nRamLevel:" + economyController.RamUpgradeLevel.ToString();
-        }
+        content += "\nCoins:" + (economyController.TotalCoinCount + economyController.CurrentCoinCount).ToString();
 
-        if(content == "")
+        content += "\nThrallLevel:" + economyController.ThrallUpgradeLevel.ToString();
+        content += "\nRamLevel:" + economyController.RamUpgradeLevel.ToString();
+
+        content += "\nThrallDuration:" + CalculateDurationThrall(economyController.ThrallUpgradeLevel).ToString();
+        content += "\nRamDuration:" + CalculateDurationRam(economyController.RamUpgradeLevel).ToString();
+
+        Debug.Log("Saving");
+        UpdateTextFile(content).Wait();
+        Debug.Log("Save complete");
+    }
+
+    public static void SaveAllData(int totalCoinCount, int currentCoinCount, int thrallUpgradeLevel, int ramUpgradeLevel)
+    {
+        string content = "";
+
+        content += "\nCoins:" + (totalCoinCount + currentCoinCount).ToString();
+
+        content += "\nThrallLevel:" + thrallUpgradeLevel.ToString();
+        content += "\nRamLevel:" + ramUpgradeLevel.ToString();
+
+        content += "\nThrallDuration:" + CalculateDurationThrall(thrallUpgradeLevel).ToString();
+        content += "\nRamDuration:" + CalculateDurationRam(ramUpgradeLevel).ToString();
+
+        Debug.Log("Saving");
+        UpdateTextFile(content).Wait();
+        Debug.Log("Save complete");
+    }
+
+    public static Dictionary<string, float> LoadAllData()
+    {
+        string path = Application.dataPath + "/Save Data.txt";
+        Dictionary<string, float> content = new Dictionary<string, float>();
+
+        foreach(string str in File.ReadLines(path))
         {
-            Debug.Log("There is nothing to save");
+            //Debug.Log(str);
+            Debug.Log(str.Split(":").Last());
+        }
+        
+        if(new FileInfo(path).Length != 0)
+        {
+            foreach(string str in File.ReadLines(path))
+            {
+                float value;
+                string key;
+
+                float.TryParse(str.Split(":").Last(), out value);//number
+                key = str.Split(":").First();
+
+                content.Add(key, value);
+            }
         }
         else
         {
-            UpdateTextFile(content);
+            Debug.Log("The save file doesn't contain any strings");
+            throw new Exception("The save file doesn't contain any strings"); 
         }
+        
+        return content;
     }
 
-    private static void UpdateTextFile(string content) 
+    private static Task UpdateTextFile(string content) 
     {
+        Debug.Log("Saving data to '" + Application.dataPath + "/Save Data.txt" + "'");
         //Path of the file
         string path = Application.dataPath + "/Save Data.txt";
         //Clear previous save data
         File.WriteAllText(path, "");
         //Write new save data
         File.WriteAllText(path, content);
+
+        return Task.CompletedTask;
     }
 
     //preferably do this kind of calculation once in main menu
