@@ -55,6 +55,23 @@ public static class TankDataHandler
         Debug.Log("Save complete");
     }
 
+    public static void SaveAllData()
+    {
+        string content = "";
+
+        content += "\nCoins:" + 0.ToString();
+
+        content += "\nThrallLevel:" + 1.ToString();
+        content += "\nRamLevel:" + 1.ToString();
+
+        content += "\nThrallDuration:" + CalculateDurationThrall(1).ToString();
+        content += "\nRamDuration:" + CalculateDurationRam(1).ToString();
+
+        Debug.Log("Saving");
+        UpdateTextFile(content).Wait();
+        Debug.Log("Save complete");
+    }
+
     public static Dictionary<string, float> LoadAllData() //reminder to create handler for when the user lacks data
     {
         string path = Application.dataPath + "/Save Data.txt";
@@ -66,6 +83,7 @@ public static class TankDataHandler
             Debug.Log(str.Split(":").Last());
         }*/
         
+
         if(new FileInfo(path).Length != 0)
         {
             foreach(string str in File.ReadLines(path))
@@ -78,13 +96,26 @@ public static class TankDataHandler
 
                 content.Add(key, value);
             }
+            return content;
         }
         else
         {
             Debug.Log("The save file doesn't contain any strings");
-            return content;
+            Debug.Log("Creating new save file...");
+            SaveAllData();
+            Debug.Log("New save file created!");
+
+            foreach(string str in File.ReadLines(path))
+            {
+                float value;
+                string key;
+
+                float.TryParse(str.Split(":").Last(), out value);//number
+                key = str.Split(":").First();
+
+                content.Add(key, value);
+            }
         }
-        
         return content;
     }
 
