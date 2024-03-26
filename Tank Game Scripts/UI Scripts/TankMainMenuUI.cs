@@ -4,6 +4,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
 using System.Linq;
+using UnityEngine.Audio;
 
 public class TankMainMenuUI : MonoBehaviour
 {
@@ -12,12 +13,24 @@ public class TankMainMenuUI : MonoBehaviour
     public UIDocument settingsMenu;
     public UIDocument backgroundImage;
     private string scenePath = "Assets/Scenes/";
+    private Dictionary<string, float> data = new Dictionary<string, float>();
 
-
-    //THIS IS 
     void Awake()
     {
+        data = TankDataHandler.LoadAllData(); //doing this in awake cause i have to load values for the shop initially
+        //call app prefs here to load volume data
         GoToMainMenu();
+        /*foreach(var element in data)
+        {
+            Debug.Log("Loading data: 'Key = " + element.Key + "; Value = " + element.Value + ";'");
+        }*/
+    }
+
+    void Start()
+    {
+        //initializing values for Global Audio Mixer (the one that regulates volumes of Audio Sources (that means i need to include mixer in all audio sources))
+        TankAppController.Instance.SetSFXVolume(PlayerPrefs.GetInt("SoundVolume", 0));
+        TankAppController.Instance.SetMusicVolume(PlayerPrefs.GetInt("MusicVolume", 0));
     }
 
     void OnEnable()
@@ -44,35 +57,57 @@ public class TankMainMenuUI : MonoBehaviour
         Button sendToPaymentButton = settingsMenuRoot.Q<Button>("SendToPaymentButton");
         Button returnButton = settingsMenuRoot.Q<Button>("BackToMainMenuButton");
 
-        returnButton.clicked += () => GoToMainMenu();
+        returnButton.clicked += () => GoToMainMenuAndSave();
 
-        //SliderInt musicVolumeSliderInt;
-        //SliderInt effectsVolumeSliderInt;
+        SliderInt effectsVolumeSliderInt = settingsMenuRoot.Q<SliderInt>("SoundVolume");
+        SliderInt musicVolumeSliderInt = settingsMenuRoot.Q<SliderInt>("MusicVolume");
+
+        effectsVolumeSliderInt.value = PlayerPrefs.GetInt("SoundVolume", 0);
+        musicVolumeSliderInt.value = PlayerPrefs.GetInt("MusicVolume", 0);
+        
+        effectsVolumeSliderInt.RegisterValueChangedCallback(v =>
+            {
+                //var oldValue = v.previousValue;
+                var newValue = v.newValue;
+                PlayerPrefs.SetInt("SoundVolume", v.newValue);
+                TankAppController.Instance.SetSFXVolume(v.newValue);
+            });
+
+        musicVolumeSliderInt.RegisterValueChangedCallback(v =>
+            {
+                //var oldValue = v.previousValue;
+                var newValue = v.newValue;
+                PlayerPrefs.SetInt("MusicVolume", v.newValue);
+                TankAppController.Instance.SetMusicVolume(v.newValue);
+                //Debug.Log("New music volume = " + TankAppController.Instance.MusicVolume.ToString());
+            });
         #endregion
     }
 
     void GoToShop()
     {
-        //DisableGameObjects();
         DisableDisplayStyles();
-        //shopMenu.gameObject.SetActive(true);
         shopMenu.rootVisualElement.style.display = DisplayStyle.Flex;
     }
 
     void GoToSettings()
     {
-        //DisableGameObjects();
         DisableDisplayStyles();
-        //settingsMenu.gameObject.SetActive(true);
         settingsMenu.rootVisualElement.style.display = DisplayStyle.Flex;
     }
 
     void GoToMainMenu()
     {
-        //DisableGameObjects();
         DisableDisplayStyles();
-        //mainMenu.gameObject.SetActive(true);
         mainMenu.rootVisualElement.style.display = DisplayStyle.Flex;
+    }
+
+    void GoToMainMenuAndSave()
+    {
+        DisableDisplayStyles();
+        mainMenu.rootVisualElement.style.display = DisplayStyle.Flex;
+        //TankDataHandler.SaveAllData(200, 0, 5, 6);
+        TankDataHandler.SaveAllData(data);
     }
 
     void DisableDisplayStyles()
