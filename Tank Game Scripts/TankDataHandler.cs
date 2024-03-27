@@ -41,19 +41,19 @@ public static class TankDataHandler
         Debug.Log("Save complete");
     }
 
-    public static void SaveAllData(Dictionary<string, float> data)
+    /*public static void SaveAllData(Dictionary<string, float> data)
     {
         string content = "";
 
-        foreach(var element in data)
+        foreach(var element in data.Keys)//this is retarded lol
         {
-            content += "\n" + element.Key + ":" + element.Value;
+
         }
 
         Debug.Log("Saving");
         UpdateTextFile(content).Wait();
         Debug.Log("Save complete");
-    }
+    }*/
 
     public static void SaveAllData()
     {
@@ -72,7 +72,7 @@ public static class TankDataHandler
         Debug.Log("Save complete");
     }
 
-    public static Dictionary<string, float> LoadAllData() //reminder to create handler for when the user lacks data
+    public static Dictionary<string, float> LoadAllData()//this doesn't check if duration values are proper, might change it soon
     {
         string path = Application.dataPath + "/Save Data.txt";
         Dictionary<string, float> content = new Dictionary<string, float>();
@@ -118,6 +118,7 @@ public static class TankDataHandler
         }
         return content;
     }
+    
 
     private static Task UpdateTextFile(string content) 
     {
@@ -133,6 +134,7 @@ public static class TankDataHandler
     }
 
     //preferably do this kind of calculation once in main menu
+    //fuck around more, those function are very unpredictable
     private static float CalculateDurationRam(int upgradeLevel)
     {
         float output = 0;
@@ -140,7 +142,7 @@ public static class TankDataHandler
         for(int i = 0; i < upgradeLevel; i++)
         {
             output += (float)System.Math.Round(3 * System.Math.Pow(e / 3, i), 2);
-            //Debug.Log(output);
+            Debug.Log(output);
         }
         return output;
     }
@@ -152,7 +154,7 @@ public static class TankDataHandler
         for(int i = 0; i < upgradeLevel; i++)
         {
             output += (float)System.Math.Round(2 * System.Math.Pow(e / 2, i), 2);
-            //Debug.Log(output);
+            Debug.Log(output);
         }
         return output;
     }
