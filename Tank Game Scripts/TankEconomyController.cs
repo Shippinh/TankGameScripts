@@ -64,4 +64,9 @@ public class TankEconomyController : MonoBehaviour
     {
         CurrentCoinCount++;
     }
+
+    public static int GetCurrentCointCount()
+    {
+        return currentCoinCount;
+    }
 }
