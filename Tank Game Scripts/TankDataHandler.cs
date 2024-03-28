@@ -7,24 +7,7 @@ using System.Linq;
 
 public static class TankDataHandler
 {
-    public static void SaveAllData(TankEconomyController economyController)
-    {
-        string content = "";
-
-        content += "\nCoins:" + (economyController.TotalCoinCount + economyController.CurrentCoinCount).ToString();
-
-        content += "\nThrallLevel:" + economyController.ThrallUpgradeLevel.ToString();
-        content += "\nRamLevel:" + economyController.RamUpgradeLevel.ToString();
-
-        content += "\nThrallDuration:" + CalculateDurationThrall(economyController.ThrallUpgradeLevel).ToString();
-        content += "\nRamDuration:" + CalculateDurationRam(economyController.RamUpgradeLevel).ToString();
-
-        Debug.Log("Saving");
-        UpdateTextFile(content).Wait();
-        Debug.Log("Save complete");
-    }
-
-    public static void SaveAllData(int totalCoinCount, int currentCoinCount, int thrallUpgradeLevel, int ramUpgradeLevel)
+    public static void SaveAllData(int totalCoinCount, int currentCoinCount, int thrallUpgradeLevel, int ramUpgradeLevel, int armorUpgradeLevel)
     {
         string content = "";
 
@@ -32,6 +15,7 @@ public static class TankDataHandler
 
         content += "\nThrallLevel:" + thrallUpgradeLevel.ToString();
         content += "\nRamLevel:" + ramUpgradeLevel.ToString();
+        content += "\nArmorLevel:" + armorUpgradeLevel.ToString();
 
         content += "\nThrallDuration:" + CalculateDurationThrall(thrallUpgradeLevel).ToString();
         content += "\nRamDuration:" + CalculateDurationRam(ramUpgradeLevel).ToString();
@@ -41,20 +25,6 @@ public static class TankDataHandler
         Debug.Log("Save complete");
     }
 
-    /*public static void SaveAllData(Dictionary<string, float> data)
-    {
-        string content = "";
-
-        foreach(var element in data.Keys)//this is retarded lol
-        {
-
-        }
-
-        Debug.Log("Saving");
-        UpdateTextFile(content).Wait();
-        Debug.Log("Save complete");
-    }*/
-
     public static void SaveAllData()
     {
         string content = "";
@@ -63,6 +33,7 @@ public static class TankDataHandler
 
         content += "\nThrallLevel:" + 1.ToString();
         content += "\nRamLevel:" + 1.ToString();
+        content += "\nArmorLevel:" + 3.ToString();
 
         content += "\nThrallDuration:" + CalculateDurationThrall(1).ToString();
         content += "\nRamDuration:" + CalculateDurationRam(1).ToString();
