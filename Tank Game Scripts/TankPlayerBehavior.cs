@@ -11,8 +11,8 @@ public class TankPlayerBehavior : MonoBehaviour
     TankMovement tankMovementReference;
     public TankDeathUI deathUI;
 
-    public uint playerHP = 3;
-    public uint playerArmor = 3;
+    public int playerHP = 3;
+    public int playerArmor = 3;
 
     public bool isUnkillable = false;
 
@@ -21,29 +21,22 @@ public class TankPlayerBehavior : MonoBehaviour
     public List<GameObject> upgrades;
     private int hitCount = 0;
     public List<AudioSource> audioSources;
-
-    public class DoubleBooleanPair
-    {
-        public double doublefloat { get; set; }
-        public bool boolean { get; set; }
-        public DoubleBooleanPair(double d, bool b)
-        {
-            doublefloat = d;
-            boolean = b;
-        }
-    }
+    Dictionary<string, float> data;
     
-    
-    public Dictionary<string, DoubleBooleanPair> upgradeDict = new Dictionary<string, DoubleBooleanPair>();
-    //bool isDestroyed = false;
-    // Start is called before the first frame update
+    public Dictionary<string, bool> upgradeDict = new Dictionary<string, bool>();
     void Awake()
     {
+        data = TankDataHandler.LoadAllData();
+
         audioSources = GetComponents<AudioSource>().ToList();
+
         foreach(GameObject upg in upgrades)
         {
-            upgradeDict.Add(upg.name, new DoubleBooleanPair(1d, false)); //upgrade name: upgrade level, is active
+            upgradeDict.Add(upg.name, false); //upgrade name : is active?
         }
+
+        playerArmor = (int)data["ArmorLevel"];
+
         tankMovementReference = GetComponent<TankMovement>();
         deathUI.deathScreen.rootVisualElement.Q<Button>("RestartButton").SetEnabled(false);//on restart causes null reference
     }
@@ -62,11 +55,6 @@ public class TankPlayerBehavior : MonoBehaviour
             tower.isKinematic = false;
             tower.mass = Random.Range(0.4f, 0.7f);
 
-            //isDestroyed = true;
-
-            //audioSource.pitch = Random.Range(0.8f, 1.3f);
-            //audioSource.Play();
-
             tower.AddForce(Vector3.up * towerPower, ForceMode.Impulse);
             tower.AddTorque(new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * towerPower, ForceMode.Impulse);
 
@@ -74,6 +62,8 @@ public class TankPlayerBehavior : MonoBehaviour
 
             tower.gameObject.GetComponent<SphereCollider>().enabled = true;
             
+            TankDataHandler.SaveAllData((int)data["Coins"], TankEconomyController.GetCurrentCointCount(), (int)data["ThrallLevel"], (int)data["RamLevel"], (int)data["ArmorLevel"]);
+
             //deathMenuHandler.DeathScreenEnabled(true);
             StartCoroutine(deathUI.ShowDeathScreen());
         }
@@ -84,7 +74,7 @@ public class TankPlayerBehavior : MonoBehaviour
         if (col.collider.tag == "Mine")
         {
             //Debug.Log("Hit Mine");
-            if (!upgradeDict["Thrall"].boolean)
+            if (!upgradeDict["Thrall"])
             {
                 playerHP = 0;
                 playerArmor = 0;
@@ -101,7 +91,7 @@ public class TankPlayerBehavior : MonoBehaviour
             TankEnemyBehaviour enemyTank = col.gameObject.GetComponent<TankEnemyBehaviour>();
             if (!enemyTank.isDestroyed)
             {
-                if (!upgradeDict["Ram"].boolean)
+                if (!upgradeDict["Ram"])
                 {
                     playerHP = 0;
                     playerArmor = 0;
@@ -145,12 +135,20 @@ public class TankPlayerBehavior : MonoBehaviour
             Destroy(col.gameObject);
             foreach(string upg in upgradeDict.Keys.ToList())
             {
-                upgradeDict[upg].boolean = false;
+                upgradeDict[upg] = false;
             }
             int rand = Random.Range(0, upgradeDict.Count);
             GameObject currentUpgrade = upgrades[rand];
-            currentUpgrade.SetActive(true);
-            upgradeDict[currentUpgrade.name].boolean = true;
+            
+            switch(currentUpgrade.name)
+            {
+                case "Ram":
+                    StartCoroutine(ActivateCurrentUpgrade(currentUpgrade, data["RamDuration"]));
+                    break;
+                case "Thrall":
+                    StartCoroutine(ActivateCurrentUpgrade(currentUpgrade, data["ThrallDuration"]));
+                    break;
+            }
         }
     }
 
@@ -159,5 +157,16 @@ public class TankPlayerBehavior : MonoBehaviour
         source.pitch = Random.Range(0.8f, 1.3f);
         AudioSource.PlayClipAtPoint(source.clip, col.collider.transform.position);
         yield return new WaitUntil(() => source.time >= source.clip.length);
+    }
+
+    private IEnumerator ActivateCurrentUpgrade(GameObject currentUpg, float duration)
+    {
+        currentUpg.SetActive(true);
+        upgradeDict[currentUpg.name] = true;
+        Debug.Log(currentUpg.name + " has been activated");
+        yield return new WaitForSeconds(duration);
+        Debug.Log(currentUpg.name + " has been deactivated");
+        currentUpg.SetActive(false);
+        upgradeDict[currentUpg.name] = false;
     }
 }
