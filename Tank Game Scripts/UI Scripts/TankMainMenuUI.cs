@@ -17,21 +17,13 @@ public class TankMainMenuUI : MonoBehaviour
 
     void Awake()
     {
-        //nevermind, i give up
-        /*data = TankDataHandler.LoadAllData(); //doing this in awake cause i have to load values for the shop initially
-        data.Remove(data.First().Key); //*/
-
-        //call app prefs here to load volume data
         GoToMainMenu();
-        /*foreach(var element in data)
-        {
-            Debug.Log("Loading data: 'Key = " + element.Key + "; Value = " + element.Value + ";'");
-        }*/
     }
 
     void Start()
     {
         //initializing values for Global Audio Mixer (the one that regulates volume of Audio Sources (that means i need to include mixer in all audio sources))
+        //this has to happen in start() and not awake(), since the global mixer isn't loaded yet during awake() call
         TankAppController.Instance.SetSFXVolume(PlayerPrefs.GetInt("SoundVolume", 0));
         TankAppController.Instance.SetMusicVolume(PlayerPrefs.GetInt("MusicVolume", 0));
     }
@@ -77,7 +69,7 @@ public class TankMainMenuUI : MonoBehaviour
             {
                 data["RamLevel"]++;
                 data["Coins"] -= 20;
-                TankDataHandler.SaveAllData((int)data["Coins"], 0, (int)data["ThrallLevel"], (int)data["RamLevel"]);
+                TankDataHandler.SaveAllData((int)data["Coins"], 0, (int)data["ThrallLevel"], (int)data["RamLevel"], (int)data["ArmorLevel"]);
                 data = TankDataHandler.LoadAllData(); //super stupid
                 data.Remove(data.First().Key); //i hate this so much
 
@@ -93,11 +85,11 @@ public class TankMainMenuUI : MonoBehaviour
 
         upgradeThrallButton.clicked += () => 
         {
-            if(data["Coins"] >= 20)
+            if(data["Coins"] >= 40)
             {
                 data["ThrallLevel"]++;
                 data["Coins"] -= 40;
-                TankDataHandler.SaveAllData((int)data["Coins"], 0, (int)data["ThrallLevel"], (int)data["RamLevel"]);
+                TankDataHandler.SaveAllData((int)data["Coins"], 0, (int)data["ThrallLevel"], (int)data["RamLevel"], (int)data["ArmorLevel"]);
                 data = TankDataHandler.LoadAllData(); //super stupid
                 data.Remove(data.First().Key); //even dumber
 
@@ -107,6 +99,25 @@ public class TankMainMenuUI : MonoBehaviour
                 + data["ThrallLevel"].ToString() 
                 + "\nCurrent bonuses:\n+" 
                 + data["ThrallDuration"].ToString() + " to Duration";
+            }
+        };
+
+        upgradeArmorButton.clicked += () =>
+        {
+            if(data["Coins"] >= 10)
+            {
+                data["ArmorLevel"]++;
+                data["Coins"] -= 10;
+                TankDataHandler.SaveAllData((int)data["Coins"], 0, (int)data["ThrallLevel"], (int)data["RamLevel"], (int)data["ArmorLevel"]);
+                data = TankDataHandler.LoadAllData(); //super stupid
+                data.Remove(data.First().Key); //even dumber
+
+                coinsLabel.text = "Coins: " + data["Coins"];
+
+                armorBonusLabel.text = "Level: " 
+                + (data["ArmorLevel"] - 2).ToString() 
+                + "\nCurrent bonuses:\n+" 
+                + data["ArmorLevel"].ToString() + " to initial Armor";
             }
         };
         
@@ -145,7 +156,7 @@ public class TankMainMenuUI : MonoBehaviour
 
     void GoToShop()
     {
-        data = TankDataHandler.LoadAllData(); //doing this in awake cause i have to load values for the shop initially
+        data = TankDataHandler.LoadAllData();
         data.Remove(data.First().Key);
 
         var shopMenuRoot = shopMenu.rootVisualElement;
@@ -157,7 +168,9 @@ public class TankMainMenuUI : MonoBehaviour
 
         Label ramBonusLabelInst = shopMenuRoot.Q<Label>("RamBonusLabel");
         Label thrallBonusLabelInst = shopMenuRoot.Q<Label>("ThrallBonusLabel");
-        //Label armorBonusLabelInst = shopMenuRoot.Q<Label>("ArmorBonusLabel");//implement later
+        Label armorBonusLabelInst = shopMenuRoot.Q<Label>("ArmorBonusLabel");
+
+        //setting initial values
 
         ramBonusLabelInst.text = "Level: " 
         + data["RamLevel"].ToString() 
@@ -169,6 +182,11 @@ public class TankMainMenuUI : MonoBehaviour
         + data["ThrallLevel"].ToString() 
         + "\nCurrent bonuses:\n+" 
         + data["ThrallDuration"].ToString() + " to Duration";
+
+        armorBonusLabelInst.text = "Level: " 
+        + (data["ArmorLevel"] - 2).ToString() 
+        + "\nCurrent bonuses:\n+" 
+        + data["ArmorLevel"].ToString() + " to initial Armor";
     }
 
     void GoToSettings()
@@ -188,7 +206,7 @@ public class TankMainMenuUI : MonoBehaviour
         DisableDisplayStyles();
         mainMenu.rootVisualElement.style.display = DisplayStyle.Flex;
         //TankDataHandler.SaveAllData(200, 0, 5, 6);
-        TankDataHandler.SaveAllData((int)data["Coins"], 0, (int)data["ThrallLevel"], (int)data["RamLevel"]);
+        TankDataHandler.SaveAllData((int)data["Coins"], 0, (int)data["ThrallLevel"], (int)data["RamLevel"], (int)data["ArmorLevel"]);
     }
 
     void DisableDisplayStyles()
@@ -196,12 +214,5 @@ public class TankMainMenuUI : MonoBehaviour
         mainMenu.rootVisualElement.style.display = DisplayStyle.None;
         shopMenu.rootVisualElement.style.display = DisplayStyle.None;
         settingsMenu.rootVisualElement.style.display = DisplayStyle.None;
-    }
-
-    void DisableGameObjects()
-    {
-        mainMenu.gameObject.SetActive(false);
-        shopMenu.gameObject.SetActive(false);
-        settingsMenu.gameObject.SetActive(false);
     }
 }
