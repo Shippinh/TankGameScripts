@@ -109,11 +109,23 @@ public static class TankDataHandler
     private static float CalculateDurationRam(int upgradeLevel)
     {
         float output = 0;
-        float e = (float)System.Math.E;
+        //float e = (float)System.Math.E;
         for(int i = 0; i < upgradeLevel; i++)
         {
-            output += (float)System.Math.Round(3 * System.Math.Pow(e / 3, i), 2);
-            Debug.Log(output);
+            /*output += (float)System.Math.Round(3 * System.Math.Pow(e / 3, i), 2);
+            Debug.Log(output);*/
+            if(upgradeLevel < 20)
+            {
+                output += 4f;
+            }
+            else if(upgradeLevel < 40 && upgradeLevel >= 20)
+            {
+                output += 2f;
+            }
+            else
+            {
+                output += 0.5f;
+            }
         }
         return output;
     }
@@ -121,11 +133,23 @@ public static class TankDataHandler
     private static float CalculateDurationThrall(int upgradeLevel)
     {
         float output = 0;
-        float e = (float)System.Math.E;
+        //float e = (float)System.Math.E;
         for(int i = 0; i < upgradeLevel; i++)
         {
-            output += (float)System.Math.Round(2 * System.Math.Pow(e / 2, i), 2);
-            Debug.Log(output);
+            /*output += (float)System.Math.Round(2 * System.Math.Pow(e / 2, i), 2);
+            Debug.Log(output);*/
+            if(upgradeLevel < 15)
+            {
+                output += 3f;
+            }
+            else if(upgradeLevel < 30  && upgradeLevel >= 15)
+            {
+                output += 1.5f;
+            }
+            else
+            {
+                output += 0.5f;
+            }
         }
         return output;
     }
