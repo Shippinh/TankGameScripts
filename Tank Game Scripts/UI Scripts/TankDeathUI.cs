@@ -9,7 +9,9 @@ using Unity.PlasticSCM.Editor.WebApi;
 public class TankDeathUI : MonoBehaviour
 {
     public UIDocument deathScreen;
+    private string scenePath = "Assets/Scenes/";
 
+    //rewrite this!!!
     void OnEnable()
     {
         //Button restartButton = deathScreen.rootVisualElement.Q<Button>("RestartButton");
@@ -17,6 +19,18 @@ public class TankDeathUI : MonoBehaviour
         //restartButton.RegisterCallback<MouseUpEvent>(OnRestartButtonClick);
         VisualElement restartButton = deathScreen.rootVisualElement.Q("RestartButton") as Button;
         restartButton.RegisterCallback<ClickEvent>(OnRestartButtonClick);
+
+        Button returnButton = deathScreen.rootVisualElement.Q<Button>("ReturnButton");
+        returnButton.clicked += () => SceneManager.LoadSceneAsync(scenePath + "MainMenuScene.unity");
+    }
+
+    void Start()
+    {
+        Button restartButton = deathScreen.rootVisualElement.Q<Button>("RestartButton");
+        Button returnButton = deathScreen.rootVisualElement.Q<Button>("ReturnButton");
+
+        restartButton.SetEnabled(false);
+        returnButton.SetEnabled(false);
     }
 
     void Awake()
@@ -28,7 +42,9 @@ public class TankDeathUI : MonoBehaviour
     {
         VisualElement screenBG = deathScreen.rootVisualElement.Q("DeathImg");
         VisualElement button = deathScreen.rootVisualElement.Q("RestartButton") as Button;
+        Button returnButton = deathScreen.rootVisualElement.Q<Button>("ReturnButton");
         button.SetEnabled(false);
+        returnButton.SetEnabled(false);
 
         Debug.Log("you did it, scene restarts");
         //DeathScreenEnabled(false);
@@ -74,21 +90,25 @@ public class TankDeathUI : MonoBehaviour
 
         screenBG.style.opacity = 0f;
         button.style.opacity = 0f;
+        returnButton.style.opacity = 0f;
     }
 
     public IEnumerator ShowDeathScreen()
     {
         VisualElement screenBG = deathScreen.rootVisualElement.Q("DeathImg");
-        VisualElement button = deathScreen.rootVisualElement.Q("RestartButton") as Button;
+        Button restartButton = deathScreen.rootVisualElement.Q<Button>("RestartButton");
+        Button returnButton = deathScreen.rootVisualElement.Q<Button>("ReturnButton");
 
         yield return new WaitForSeconds(1f);
 
-        button.SetEnabled(true);
+        restartButton.SetEnabled(true);
+        returnButton.SetEnabled(true);
 
         //DeathScreenEnabled(true);
 
         screenBG.style.opacity = 1f;
-        button.style.opacity = 1f;
+        restartButton.style.opacity = 1f;
+        returnButton.style.opacity = 1f;
 
         //Debug.Log("DEATH SCREEN");
         yield return 0;
