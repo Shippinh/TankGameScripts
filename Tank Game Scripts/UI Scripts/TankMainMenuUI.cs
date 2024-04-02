@@ -65,10 +65,12 @@ public class TankMainMenuUI : MonoBehaviour
 
         upgradeRamButton.clicked += () => 
         {
-            if(data["Coins"] >= 20)
+            int costToUpgrade = (int)data["RamLevel"] * 10 / 2;
+            int costToNextUpgrade = ((int)data["RamLevel"] + 1) * 15 / 2;
+            if(data["Coins"] >= costToUpgrade)
             {
                 data["RamLevel"]++;
-                data["Coins"] -= 20;
+                data["Coins"] -= costToUpgrade;
                 TankDataHandler.SaveAllData((int)data["Coins"], 0, (int)data["ThrallLevel"], (int)data["RamLevel"], (int)data["ArmorLevel"]);
                 data = TankDataHandler.LoadAllData(); //super stupid
                 data.Remove(data.First().Key); //i hate this so much
@@ -80,15 +82,19 @@ public class TankMainMenuUI : MonoBehaviour
                 + "\nCurrent bonuses:\n+" 
                 + data["RamDuration"].ToString() 
                 + " to Duration\n+1 Armor per rammed tank";
+
+                ramCostLabel.text = "*" + costToNextUpgrade.ToString() + " coins";
             }
         };
 
         upgradeThrallButton.clicked += () => 
         {
-            if(data["Coins"] >= 40)
+            int costToUpgrade = (int)data["RamLevel"] * 12 / 2;
+            int costToNextUpgrade = ((int)data["RamLevel"] + 1) * 12 / 2;
+            if(data["Coins"] >= costToUpgrade)
             {
                 data["ThrallLevel"]++;
-                data["Coins"] -= 40;
+                data["Coins"] -= costToUpgrade;
                 TankDataHandler.SaveAllData((int)data["Coins"], 0, (int)data["ThrallLevel"], (int)data["RamLevel"], (int)data["ArmorLevel"]);
                 data = TankDataHandler.LoadAllData(); //super stupid
                 data.Remove(data.First().Key); //even dumber
@@ -99,15 +105,18 @@ public class TankMainMenuUI : MonoBehaviour
                 + data["ThrallLevel"].ToString() 
                 + "\nCurrent bonuses:\n+" 
                 + data["ThrallDuration"].ToString() + " to Duration";
+
+                thrallCostLabel.text = "*" + costToNextUpgrade.ToString() + " coins";
             }
         };
 
         upgradeArmorButton.clicked += () =>
         {
-            if(data["Coins"] >= 10)
+            int costToUpgrade = 10;
+            if(data["Coins"] >= costToUpgrade)
             {
                 data["ArmorLevel"]++;
-                data["Coins"] -= 10;
+                data["Coins"] -= costToUpgrade;
                 TankDataHandler.SaveAllData((int)data["Coins"], 0, (int)data["ThrallLevel"], (int)data["RamLevel"], (int)data["ArmorLevel"]);
                 data = TankDataHandler.LoadAllData(); //super stupid
                 data.Remove(data.First().Key); //even dumber
@@ -118,6 +127,8 @@ public class TankMainMenuUI : MonoBehaviour
                 + (data["ArmorLevel"] - 2).ToString() 
                 + "\nCurrent bonuses:\n+" 
                 + data["ArmorLevel"].ToString() + " to initial Armor";
+
+                armorCostLabel.text = "*" + costToUpgrade.ToString() + " coins";
             }
         };
         
@@ -170,6 +181,10 @@ public class TankMainMenuUI : MonoBehaviour
         Label thrallBonusLabelInst = shopMenuRoot.Q<Label>("ThrallBonusLabel");
         Label armorBonusLabelInst = shopMenuRoot.Q<Label>("ArmorBonusLabel");
 
+        Label ramCostLabelInst = shopMenuRoot.Q<Label>("RamCostLabel");
+        Label thrallCostLabelInst = shopMenuRoot.Q<Label>("ThrallCostLabel");
+        Label armorCostLabelInst = shopMenuRoot.Q<Label>("ArmorCostLabel");
+
         //setting initial values
 
         ramBonusLabelInst.text = "Level: " 
@@ -187,6 +202,11 @@ public class TankMainMenuUI : MonoBehaviour
         + (data["ArmorLevel"] - 2).ToString() 
         + "\nCurrent bonuses:\n+" 
         + data["ArmorLevel"].ToString() + " to initial Armor";
+
+
+        ramCostLabelInst.text = "*" + ((int)data["RamLevel"] * 10 / 2).ToString() + " coins";
+        thrallCostLabelInst.text = "*" + ((int)data["RamLevel"] * 12 / 2).ToString() + " coins";
+        armorCostLabelInst.text = "*10 coins";
     }
 
     void GoToSettings()
