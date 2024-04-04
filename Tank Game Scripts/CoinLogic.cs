@@ -33,7 +33,7 @@ public class CoinLogic : MonoBehaviour
         if(col.tag == "Player")
         {
             economy.IncreaseCurrentCoinCount();
-            Destroy(this.gameObject, 0.05f);
+            Destroy(this.gameObject);
         }
     }
 }

@@ -21,12 +21,15 @@ public class TankPlayerBehavior : MonoBehaviour
     public List<GameObject> upgrades;
     private int hitCount = 0;
     public List<AudioSource> audioSources;
-    Dictionary<string, float> data;
+    public Dictionary<string, float> data;
+    public bool isDestroyed = false;
     
+    //rewrite this!!!!!
     public Dictionary<string, bool> upgradeDict = new Dictionary<string, bool>();
     void Awake()
     {
         data = TankDataHandler.LoadAllData();
+        data.Remove(data.First().Key);
 
         audioSources = GetComponents<AudioSource>().ToList();
 
@@ -123,7 +126,11 @@ public class TankPlayerBehavior : MonoBehaviour
 
         if(playerHP == 0)
         {
-            StartCoroutine(Destruction());
+            if(!isDestroyed)
+            {
+                StartCoroutine(Destruction());
+                isDestroyed = true;
+            }
         }
     }
 
@@ -136,6 +143,10 @@ public class TankPlayerBehavior : MonoBehaviour
             foreach(string upg in upgradeDict.Keys.ToList())
             {
                 upgradeDict[upg] = false;
+            }
+            foreach(GameObject obj in upgrades)
+            {
+                obj.SetActive(false);
             }
             int rand = Random.Range(0, upgradeDict.Count);
             GameObject currentUpgrade = upgrades[rand];
@@ -155,7 +166,7 @@ public class TankPlayerBehavior : MonoBehaviour
     private IEnumerator PlayBulletHitSound(AudioSource source, Collision col)
     {
         source.pitch = Random.Range(0.8f, 1.3f);
-        AudioSource.PlayClipAtPoint(source.clip, col.collider.transform.position);
+        source.PlayOneShot(source.clip);
         yield return new WaitUntil(() => source.time >= source.clip.length);
     }
 
@@ -168,5 +179,10 @@ public class TankPlayerBehavior : MonoBehaviour
         Debug.Log(currentUpg.name + " has been deactivated");
         currentUpg.SetActive(false);
         upgradeDict[currentUpg.name] = false;
+    }
+
+    public int GetCoinCount()
+    {
+        return (int)data["Coins"];
     }
 }

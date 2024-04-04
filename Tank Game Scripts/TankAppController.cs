@@ -36,4 +36,12 @@ public class TankAppController : MonoBehaviour
         masterMixer.SetFloat("Music", value);
         MusicVolume = value;
     }
+
+    public int GetMusicVolume()
+    {
+        float value;
+        masterMixer.GetFloat("Music", out value);
+        int musicVolume = (int)value;
+        return musicVolume;
+    }
 }

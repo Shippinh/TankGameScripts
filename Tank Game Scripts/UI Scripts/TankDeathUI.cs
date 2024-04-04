@@ -21,7 +21,7 @@ public class TankDeathUI : MonoBehaviour
         restartButton.RegisterCallback<ClickEvent>(OnRestartButtonClick);
 
         Button returnButton = deathScreen.rootVisualElement.Q<Button>("ReturnButton");
-        returnButton.clicked += () => SceneManager.LoadSceneAsync(scenePath + "MainMenuScene.unity");
+        returnButton.clicked += () => SceneManager.LoadScene(scenePath + "MainMenuScene.unity");
     }
 
     void Start()

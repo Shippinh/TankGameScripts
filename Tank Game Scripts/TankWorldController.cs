@@ -11,6 +11,7 @@ namespace UnityEngine
         public GameObject enemyTankPrefab;
         public GameObject minePrefab;
         public GameObject coinPacks;
+        public GameObject upgradePrefab;
         bool isHit = false;
         public GameObject platformPrefab;
         [SerializeField]
@@ -69,14 +70,20 @@ namespace UnityEngine
                 i = Random.Range(0, 3);
                 while (i < 3)
                 {
-                    Instantiate(minePrefab, this.transform.position + new Vector3(Random.Range(-5f, 5f), 0.54f, Random.Range(60f, 80f)), Quaternion.identity);
+                    Instantiate(minePrefab, this.transform.position + new Vector3(Random.Range(-4f, 4f), 0.54f, Random.Range(60f, 80f)), Quaternion.identity);
                     i++;
                 }
+                i = Random.Range(0, 4);
                 if(i < 4)
                 {
                     int coinPackIndex = Random.Range(0, 4);
                     //Debug.Log(coinPacks.transform.GetChild(coinPackIndex).gameObject.name);
                     Instantiate(coinPacks.transform.GetChild(coinPackIndex).gameObject, this.transform.position + new Vector3(0f, 1.5f, Random.Range(60f, 80f)), Quaternion.identity);
+                }
+                i = Random.Range(0, 8);
+                if(i < 5)
+                {
+                    Instantiate(upgradePrefab, this.transform.position + new Vector3(Random.Range(-4f, 4f), 1.5f, Random.Range(60f, 80f)), Quaternion.identity);
                 }
                 nextPlatform.name = "New Platform";
             }
@@ -84,7 +91,7 @@ namespace UnityEngine
 
         private void OnCollisionExit(Collision collision)
         {
-            Debug.Log("Collider '" + collision.collider.name + "' has stopped colliding");
+            //Debug.Log("Collider '" + collision.collider.name + "' has stopped colliding");
             if ((collision.collider.tag == "Player" || collision.gameObject.name == "Tank" || collision.gameObject.name == "Tank Body") && isHit == true)
             {
                 Destroy(this.gameObject, destroyTime);
