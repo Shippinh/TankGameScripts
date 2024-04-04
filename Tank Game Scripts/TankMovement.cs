@@ -86,11 +86,13 @@ public class TankMovement : MonoBehaviour
                 Instantiate(bullet, turretCannon.transform.position, turretCannon.transform.rotation); 
                 if (UnityEngine.Random.Range(0, 2) == 0)
                 {
-                    AudioSource.PlayClipAtPoint(shoot1, transform.position);
+                    //AudioSource.PlayClipAtPoint(shoot1, transform.position);
+                    soundSource.PlayOneShot(shoot1);
                 }
                 else
                 {  
-                   AudioSource.PlayClipAtPoint(shoot2, transform.position);//soundSource.PlayOneShot(shoot2); 
+                   //AudioSource.PlayClipAtPoint(shoot2, transform.position);//soundSource.PlayOneShot(shoot2); 
+                   soundSource.PlayOneShot(shoot1);
                 }
                 hasFired = true;
             }

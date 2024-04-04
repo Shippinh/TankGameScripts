@@ -84,7 +84,7 @@ namespace UnityEngine
             isDestroyed = true;
 
             audioSource.pitch = Random.Range(0.8f, 1.3f);
-            AudioSource.PlayClipAtPoint(audioSource.clip, transform.position);
+            audioSource.PlayOneShot(audioSource.clip);
 
             tower.AddForce(Vector3.up * towerPower, ForceMode.Impulse);
             tower.AddTorque(new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * towerPower, ForceMode.Impulse);
