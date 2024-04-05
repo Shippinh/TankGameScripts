@@ -34,21 +34,21 @@ namespace UnityEngine
         public bool isDestroyed = false;
         public bool canAim = true;
         public bool canDrive = false;
-        public bool drivesLeft = true;
+        public bool drivesLeft = false;
 
         public float towerPower = 10f;
         public float destroyTime = 20f;
         public float shootTime = 2f;
-        public float driveDistance = 3f;
+        public float driveDistance = 5.5f;
         private void Awake()
         {
             Physics.IgnoreCollision(tower.GetComponent<Collider>(), GetComponent<BoxCollider>(), true);
             playerTankBody = GameObject.FindGameObjectWithTag("Player");
             audioSource = GetComponent<AudioSource>();
+            RandomiseProperties();
             StartCoroutine(Shoot(shootTime));
             Destroy(obj, destroyTime + 20f);
             Destroy(tower.gameObject, destroyTime + 20f);
-            RandomiseProperties();
         }
 
         // Update is called once per frame
@@ -57,18 +57,31 @@ namespace UnityEngine
             if (canAim)
                 Aim();
             if (canDrive)
-                Drive();
+                if (!isDestroyed)
+                {
+                    if(this.drivesLeft)
+                    {
+                        DriveLeft();
+                    }
+                    else
+                    {
+                        DriveRight();
+                    }
+                }
         }
 
-        private void OnCollisionEnter(Collision col)
+        void OnCollisionEnter(Collision col)
         {
             if (col.collider.tag == "Player Bullet" && !isDestroyed)
             {
                 StartCoroutine(Destruction());
             }
-            if (col.collider.tag == "Wall" && !isDestroyed)
+            if (col.collider.tag == "Wall" || col.collider.tag == "Enemy Tank" && !isDestroyed)
             {
-                drivesLeft = !drivesLeft;
+                Debug.Log(this.gameObject.name + " hit the wall at x = " + transform.position.x + ", z = " + transform.position.z);
+                Debug.Log(drivesLeft + " before hit");
+                this.drivesLeft = !this.drivesLeft;
+                Debug.Log(drivesLeft + " after hit");
             }
         }
 
@@ -96,7 +109,7 @@ namespace UnityEngine
             Destroy(tower.gameObject, destroyTime);
         }
 
-        private void Aim()
+        void Aim()
         {
             if (!isDestroyed)
             {
@@ -120,7 +133,7 @@ namespace UnityEngine
             }
         }
 
-        private void RandomiseProperties()
+        void RandomiseProperties()
         {
             //Aiming
             if (Random.Range(0, 2) == 1)//50/50
@@ -140,6 +153,14 @@ namespace UnityEngine
                 tower.constraints = RigidbodyConstraints.None;
                 body.constraints = RigidbodyConstraints.None;
                 body.constraints = RigidbodyConstraints.FreezeRotation;
+                if(Random.Range(0, 2) == 1)
+                {
+                    drivesLeft = true;
+                }
+                else
+                {
+                    drivesLeft = false;
+                }
             }
             else
             {
@@ -154,7 +175,7 @@ namespace UnityEngine
             StartCoroutine(Destruction());
         }
 
-        private void Drive()
+        void Drive()
         {
             if (!isDestroyed)
             {
@@ -162,11 +183,21 @@ namespace UnityEngine
                 {
                     body.MovePosition(body.position + Vector3.left * driveDistance * Time.fixedDeltaTime);
                 }
-                else
+                else if(!drivesLeft)
                 {
                     body.MovePosition(body.position + Vector3.right * driveDistance * Time.fixedDeltaTime);
                 }
             }
+        }
+
+        void DriveLeft()
+        {
+            body.MovePosition(body.position + Vector3.left * driveDistance * Time.fixedDeltaTime);
+        }
+
+        void DriveRight()
+        {
+            body.MovePosition(body.position + Vector3.right * driveDistance * Time.fixedDeltaTime);
         }
     }
 }
