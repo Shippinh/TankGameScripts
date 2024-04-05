@@ -157,6 +157,7 @@ public class TankPlayerBehavior : MonoBehaviour
                     StartCoroutine(ActivateCurrentUpgrade(currentUpgrade, data["RamDuration"]));
                     break;
                 case "Thrall":
+                    playerArmor += 2;
                     StartCoroutine(ActivateCurrentUpgrade(currentUpgrade, data["ThrallDuration"]));
                     break;
             }
