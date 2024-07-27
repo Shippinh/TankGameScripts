@@ -8,6 +8,8 @@ using Unity.PlasticSCM.Editor.WebApi;
 
 public class TankDeathUI : MonoBehaviour
 {
+    public TankPlayerBehavior player;
+    public TankEconomyController economyController;
     public UIDocument deathScreen;
     private string scenePath = "Assets/Scenes/";
 
@@ -51,42 +53,7 @@ public class TankDeathUI : MonoBehaviour
         //Debug.Log("Restarting");
         string sceneName = SceneManager.GetActiveScene().name;
 
-        GameObject tankWorldController = new GameObject();
-        TankEconomyController economyController;
-        int totalCoinCount;
-        int currentCoinCount;
-
-        List<GameObject> rootGameObjects = SceneManager.GetActiveScene().GetRootGameObjects().ToList();
-        foreach(GameObject gameObject in rootGameObjects)
-        {
-            //Debug.Log(gameObject.name);
-            if(gameObject.name == "Tank world")
-            {
-                tankWorldController = gameObject;
-            }
-        }
-
-        economyController = tankWorldController.GetComponentInChildren<TankEconomyController>();
-        //Debug.Log(economyController.gameObject.name);
-
-        totalCoinCount = economyController.TotalCoinCount;
-        currentCoinCount = economyController.CurrentCoinCount;
-        //Debug.Log("Pre reload: Total coin count = " + economyController.TotalCoinCount + ";\nCurrent coin count = " + economyController.CurrentCoinCount);
-
         SceneManager.LoadScene(sceneName);
-        
-        rootGameObjects = SceneManager.GetActiveScene().GetRootGameObjects().ToList();
-        foreach(GameObject gameObject in rootGameObjects)
-        {
-            //Debug.Log(gameObject.name);
-            if(gameObject.name == "Tank world")
-            {
-                economyController = gameObject.GetComponentInChildren<TankEconomyController>();
-                economyController.TotalCoinCount = currentCoinCount + totalCoinCount;
-                economyController.CurrentCoinCount = 0;
-            }
-        }
-        Debug.Log("Post reload: Total coin count = " + economyController.TotalCoinCount + ";\nCurrent coin count = " + economyController.CurrentCoinCount);
 
         screenBG.style.opacity = 0f;
         button.style.opacity = 0f;
