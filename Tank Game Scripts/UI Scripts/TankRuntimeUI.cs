@@ -88,6 +88,11 @@ public class TankRuntimeUI : MonoBehaviour
             pauseMenuRoot.style.display = DisplayStyle.None;
         };
         #endregion
+/*
+        Debug.Log("Current coin count: " + economyController.CurrentCoinCount.ToString());
+        Debug.Log("Initial coin count: " + initialCoinCount.ToString());
+        Debug.Log("Total coin count: " + economyController.TotalCoinCount.ToString());
+        Debug.Log("Saved data coins: " + player.data["Coins"].ToString());*/
     }
 
     void Start()
@@ -96,8 +101,8 @@ public class TankRuntimeUI : MonoBehaviour
         DisableSettingsMenu();
     }
 
-    // Update is called once per frame
-    void Update()
+    // don't forget to save coin count on death and reset
+    void LateUpdate()
     {
         coinRef.text = (economyController.CurrentCoinCount + initialCoinCount).ToString();
         armorRef.text = player.playerArmor.ToString();
@@ -107,7 +112,6 @@ public class TankRuntimeUI : MonoBehaviour
             tankUI.enabled = false;
         }
     }
-
 
     void DisableSettingsMenu()
     {

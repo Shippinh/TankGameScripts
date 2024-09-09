@@ -7,6 +7,8 @@ using System.Linq;
 
 public static class TankDataHandler
 {
+    const float defaultThrallDuration = 3f;
+    const float defaultRamDuration = 4f;
     public static void SaveAllData(int totalCoinCount, int currentCoinCount, int thrallUpgradeLevel, int ramUpgradeLevel, int armorUpgradeLevel)
     {
         string content = "";
@@ -35,12 +37,33 @@ public static class TankDataHandler
         content += "\nRamLevel:" + 1.ToString();
         content += "\nArmorLevel:" + 3.ToString();
 
-        content += "\nThrallDuration:" + CalculateDurationThrall(1).ToString();
-        content += "\nRamDuration:" + CalculateDurationRam(1).ToString();
+        content += "\nThrallDuration:" + defaultThrallDuration.ToString();
+        content += "\nRamDuration:" + defaultRamDuration.ToString();
 
         Debug.Log("Saving");
         UpdateTextFile(content).Wait();
         Debug.Log("Save complete");
+    }
+
+    /// <summary>
+    /// Checks if the game has generated a save file
+    /// </summary>
+    /// <returns>True if file is present, false if file doesn't exist</returns>
+    public static bool CheckForData()
+    {
+        string path = Application.dataPath + "/Save Data.txt";
+        Dictionary<string, float> content = new Dictionary<string, float>();
+        try
+        {
+            if(new FileInfo(path).Length == 0)
+            {
+            }
+        }
+        catch
+        {
+            return false;
+        }
+        return true;
     }
 
     public static Dictionary<string, float> LoadAllData()//this doesn't check if duration values are proper, might change it soon
@@ -105,26 +128,25 @@ public static class TankDataHandler
     }
 
     //preferably do this kind of calculation once in main menu
-    //fuck around more, those function are very unpredictable
     private static float CalculateDurationRam(int upgradeLevel)
     {
-        float output = 0;
+        float output = defaultRamDuration - 0.4f;
         //float e = (float)System.Math.E;
         for(int i = 0; i < upgradeLevel; i++)
         {
             /*output += (float)System.Math.Round(3 * System.Math.Pow(e / 3, i), 2);
             Debug.Log(output);*/
-            if(upgradeLevel < 20)
+            if(i < 20)
             {
-                output += 4f;
+                output += 0.4f;
             }
-            else if(upgradeLevel < 40 && upgradeLevel >= 20)
+            else if(i < 40 && i >= 20)
             {
-                output += 2f;
+                output += 0.2f;
             }
             else
             {
-                output += 0.5f;
+                output += 0.05f;
             }
         }
         return output;
@@ -132,23 +154,23 @@ public static class TankDataHandler
 
     private static float CalculateDurationThrall(int upgradeLevel)
     {
-        float output = 0;
+        float output = defaultThrallDuration - 0.3f;
         //float e = (float)System.Math.E;
         for(int i = 0; i < upgradeLevel; i++)
         {
             /*output += (float)System.Math.Round(2 * System.Math.Pow(e / 2, i), 2);
             Debug.Log(output);*/
-            if(upgradeLevel < 15)
+            if(i < 15)
             {
-                output += 3f;
+                output += 0.3f;
             }
-            else if(upgradeLevel < 30  && upgradeLevel >= 15)
+            else if(i < 30  && i >= 15)
             {
-                output += 1.5f;
+                output += 0.15f;
             }
             else
             {
-                output += 0.5f;
+                output += 0.05f;
             }
         }
         return output;

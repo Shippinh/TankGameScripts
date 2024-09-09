@@ -18,6 +18,10 @@ public class TankMainMenuUI : MonoBehaviour
     void Awake()
     {
         GoToMainMenu();
+        if(!TankDataHandler.CheckForData())
+        {
+            TankDataHandler.SaveAllData();
+        }
     }
 
     void Start()
@@ -66,7 +70,7 @@ public class TankMainMenuUI : MonoBehaviour
         upgradeRamButton.clicked += () => 
         {
             int costToUpgrade = (int)data["RamLevel"] * 10 / 2;
-            int costToNextUpgrade = ((int)data["RamLevel"] + 1) * 15 / 2;
+            int costToNextUpgrade = ((int)data["RamLevel"] + 1) * 10 / 2;
             if(data["Coins"] >= costToUpgrade)
             {
                 data["RamLevel"]++;
@@ -89,8 +93,8 @@ public class TankMainMenuUI : MonoBehaviour
 
         upgradeThrallButton.clicked += () => 
         {
-            int costToUpgrade = (int)data["RamLevel"] * 12 / 2;
-            int costToNextUpgrade = ((int)data["RamLevel"] + 1) * 12 / 2;
+            int costToUpgrade = (int)data["ThrallLevel"] * 12 / 2;
+            int costToNextUpgrade = ((int)data["ThrallLevel"] + 1) * 12 / 2;
             if(data["Coins"] >= costToUpgrade)
             {
                 data["ThrallLevel"]++;
@@ -191,12 +195,12 @@ public class TankMainMenuUI : MonoBehaviour
         + data["RamLevel"].ToString() 
         + "\nCurrent bonuses:\n+" 
         + data["RamDuration"].ToString() 
-        + " to Duration\n+1 Armor per rammed tank";
+        + "s to Duration\n+1 Armor per rammed tank";
 
         thrallBonusLabelInst.text = "Level: " 
         + data["ThrallLevel"].ToString() 
         + "\nCurrent bonuses:\n+" 
-        + data["ThrallDuration"].ToString() + " to Duration";
+        + data["ThrallDuration"].ToString() + "s to Duration";
 
         armorBonusLabelInst.text = "Level: " 
         + (data["ArmorLevel"] - 2).ToString() 
@@ -205,7 +209,7 @@ public class TankMainMenuUI : MonoBehaviour
 
 
         ramCostLabelInst.text = "*" + ((int)data["RamLevel"] * 10 / 2).ToString() + " coins";
-        thrallCostLabelInst.text = "*" + ((int)data["RamLevel"] * 12 / 2).ToString() + " coins";
+        thrallCostLabelInst.text = "*" + ((int)data["ThrallLevel"] * 12 / 2).ToString() + " coins";
         armorCostLabelInst.text = "*10 coins";
     }
 
