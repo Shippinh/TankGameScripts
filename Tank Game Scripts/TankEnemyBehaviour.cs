@@ -78,10 +78,10 @@ namespace UnityEngine
             }
             if (col.collider.tag == "Wall" || col.collider.tag == "Enemy Tank" && !isDestroyed)
             {
-                Debug.Log(this.gameObject.name + " hit the wall at x = " + transform.position.x + ", z = " + transform.position.z);
-                Debug.Log(drivesLeft + " before hit");
+                //Debug.Log(this.gameObject.name + " hit the wall at x = " + transform.position.x + ", z = " + transform.position.z);
+                //Debug.Log(drivesLeft + " before hit");
                 this.drivesLeft = !this.drivesLeft;
-                Debug.Log(drivesLeft + " after hit");
+                //Debug.Log(drivesLeft + " after hit");
             }
         }
 
@@ -161,13 +161,14 @@ namespace UnityEngine
                 {
                     drivesLeft = false;
                 }
+                obj.transform.rotation = Quaternion.Euler(0f, 90f, 0f);
             }
             else
             {
                 canDrive = false;
             }
             if (!canAim)
-                obj.transform.rotation = Quaternion.Euler(0f, 180f, 0f); //rotate the tower towards player on spawn if can't aim
+                tower.transform.rotation = Quaternion.Euler(0f, 180f, 0f); //rotate the tower towards player on spawn if can't aim
         }
 
         public void CollisionDetected(TankCheckTowerCollision childScript)
