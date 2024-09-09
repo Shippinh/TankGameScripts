@@ -60,7 +60,7 @@ namespace UnityEngine
                 isHit = true;
                 //Debug.Log("Hit!");
                 GameObject nextPlatform = Instantiate(platformPrefab, this.transform.position + new Vector3(0f, 0f, 50f), Quaternion.identity);
-                int i = Random.Range(0, 4);
+                int i = Random.Range(1, 4);
                 while (i < 4)
                 {
                     //for some reason instantiates like ass and sometimes causes tank towers to be unproportional to the prefab
