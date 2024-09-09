@@ -10,6 +10,7 @@ public class TankPlayerBehavior : MonoBehaviour
     [SerializeField]
     TankMovement tankMovementReference;
     public TankDeathUI deathUI;
+    public TankEconomyController economyController;
 
     public int playerHP = 3;
     public int playerArmor = 3;
@@ -65,7 +66,12 @@ public class TankPlayerBehavior : MonoBehaviour
 
             tower.gameObject.GetComponent<SphereCollider>().enabled = true;
             
-            TankDataHandler.SaveAllData((int)data["Coins"], TankEconomyController.GetCurrentCointCount(), (int)data["ThrallLevel"], (int)data["RamLevel"], (int)data["ArmorLevel"]);
+            //skipping saving if nothing changed
+            if((int)data["Coins"] + economyController.CurrentCoinCount != (int)data["Coins"])
+            {
+                TankDataHandler.SaveAllData((int)data["Coins"], economyController.CurrentCoinCount, (int)data["ThrallLevel"], (int)data["RamLevel"], (int)data["ArmorLevel"]);
+                economyController.ResetCurrentCoinCount();
+            }
 
             //deathMenuHandler.DeathScreenEnabled(true);
             StartCoroutine(deathUI.ShowDeathScreen());
@@ -111,17 +117,18 @@ public class TankPlayerBehavior : MonoBehaviour
         {
             int audioSourceIndex = Random.Range(0,2);
             hitCount++;
+
             if (playerArmor > 0)
             {
                 playerArmor--;
-                StartCoroutine(PlayBulletHitSound(audioSources[audioSourceIndex], col));
             }
             else
             {
                 playerHP--;
-                StartCoroutine(PlayBulletHitSound(audioSources[audioSourceIndex], col));//better change this later
             }
-            //Debug.Log("Player got hit " + hitCount + " times");
+
+            StartCoroutine(PlayBulletHitSound(audioSources[audioSourceIndex], col));
+            Debug.Log("Player got hit " + hitCount + " times");
         }
 
         if(playerHP == 0)
