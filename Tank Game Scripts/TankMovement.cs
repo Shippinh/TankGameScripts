@@ -16,7 +16,7 @@ public class TankMovement : MonoBehaviour
     Ray mouseRay;
     Vector3 touchInput;
     float fireInput;
-    float fireDelay = 2f; //how much seconds to wait before allowing another shot
+    float fireDelay = 2f; //how long to wait before allowing another shot
     float currentFireDelay = 0f;
 
     [SerializeField]
