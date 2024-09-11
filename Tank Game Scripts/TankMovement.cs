@@ -53,7 +53,13 @@ public class TankMovement : MonoBehaviour
 
         fireInput = Input.GetAxis("Fire2");
 
-        desiredVelocity = new Vector3(playerInput.x, 0f, 1f).normalized*speed;
+        //this is fundamentally broken because i just had to use MovePosition instead of AddForce
+        if(transform.position.x > 5)
+            desiredVelocity = new Vector3(-1f, 0f, 1f).normalized * speed;
+        else if(transform.position.x < -5)
+            desiredVelocity = new Vector3(1f, 0f, 1f).normalized * speed;
+        else
+            desiredVelocity = new Vector3(playerInput.x, 0f, 1f).normalized * speed;
 
         if(Input.GetAxis("Fire1") != 0)
         {
