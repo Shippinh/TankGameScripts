@@ -1,10 +1,7 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.SceneManagement;
-using System.Linq;
-using Unity.PlasticSCM.Editor.WebApi;
 
 public class TankDeathUI : MonoBehaviour
 {

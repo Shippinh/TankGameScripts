@@ -25,7 +25,7 @@ public class CoinLogic : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        transform.Rotate(Vector3.right);
+        transform.Rotate(Vector3.right * Time.fixedDeltaTime);
     }
 
     void OnTriggerEnter(Collider col)
